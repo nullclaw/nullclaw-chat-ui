@@ -15,6 +15,7 @@
 		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.50.2",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"@types/marked": "^5.0.2",
 		"svelte": "^5.51.0",
 		"svelte-check": "^4.3.6",
 		"typescript": "^5.9.3",
@@ -22,6 +23,10 @@
 		"vitest": "^4.0.18"
 	},
 	"dependencies": {
-		"@noble/ciphers": "^2.1.1"
+		"@noble/ciphers": "^2.1.1",
+		"highlight.js": "^11.11.1",
+		"isomorphic-dompurify": "^3.0.0",
+		"marked": "^17.0.3",
+		"marked-highlight": "^2.2.3"
 	}
 }

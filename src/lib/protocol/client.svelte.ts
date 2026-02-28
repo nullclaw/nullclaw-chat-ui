@@ -17,7 +17,7 @@ export class NullclawClient {
   onEvent: ((event: Envelope) => void) | null = null;
 
   private ws: WebSocket | null = null;
-  private url: string;
+  public url: string;
   private sessionId: string;
   private e2eState: { sharedKey: Uint8Array } | null = null;
   private reconnectAttempt = 0;
