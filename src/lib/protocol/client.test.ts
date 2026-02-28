@@ -51,6 +51,7 @@ describe('NullclawClient', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
     vi.resetModules();
   });
@@ -159,6 +160,47 @@ describe('NullclawClient', () => {
     expect(ws.sent.length).toBe(0);
   });
 
+  it('reconnects with backoff when paired socket closes unexpectedly', () => {
+    vi.useFakeTimers();
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
+    const client = new NullclawClient('ws://localhost:32123/ws', 'sess-1');
+    client.restoreSession('jwt-123', new Uint8Array(32).fill(7));
+    client.connect();
+
+    const ws = MockWebSocket.instances[0];
+    ws.simulateOpen();
+    ws.simulateClose(1006);
+
+    expect(client.state).toBe('disconnected');
+    expect(MockWebSocket.instances.length).toBe(1);
+
+    // delay = 1000 * (0.5 + random() * 0.5) with random()=0 => 500ms
+    vi.advanceTimersByTime(499);
+    expect(MockWebSocket.instances.length).toBe(1);
+
+    vi.advanceTimersByTime(1);
+    expect(MockWebSocket.instances.length).toBe(2);
+  });
+
+  it('does not reconnect after explicit disconnect()', () => {
+    vi.useFakeTimers();
+
+    const client = new NullclawClient('ws://localhost:32123/ws', 'sess-1');
+    client.restoreSession('jwt-123', new Uint8Array(32).fill(7));
+    client.connect();
+
+    const ws = MockWebSocket.instances[0];
+    ws.simulateOpen();
+
+    client.disconnect();
+    ws.simulateClose(1000);
+
+    vi.advanceTimersByTime(30_000);
+    expect(MockWebSocket.instances.length).toBe(1);
+    expect(client.state).toBe('disconnected');
+  });
+
   it('restores auth and skips pairing on reconnect', () => {
     const client = new NullclawClient('ws://localhost:32123/ws', 'sess-1');
     client.restoreSession('jwt-123', new Uint8Array(32).fill(7));
@@ -193,6 +235,54 @@ describe('NullclawClient', () => {
 
     expect(events[0].type).toBe('error');
     expect(events[0].payload.code).toBe('unauthorized');
+  });
+
+  it('ignores malformed envelopes', () => {
+    const client = new NullclawClient('ws://localhost:32123/ws', 'sess-1');
+    const events: any[] = [];
+    client.onEvent = (e: any) => events.push(e);
+    client.connect();
+
+    const ws = MockWebSocket.instances[0];
+    ws.simulateOpen();
+    ws.simulateMessage(
+      JSON.stringify({
+        v: 999,
+        type: 'assistant_final',
+        session_id: 'sess-1',
+        payload: { content: 'unexpected' },
+      }),
+    );
+    ws.simulateMessage(
+      JSON.stringify({
+        v: 1,
+        type: 'assistant_final',
+        session_id: '',
+        payload: { content: 'unexpected' },
+      }),
+    );
+
+    expect(events).toHaveLength(0);
+  });
+
+  it('emits client error when websocket constructor throws', () => {
+    class ThrowingWebSocket {
+      constructor() {
+        throw new Error('boom');
+      }
+    }
+
+    vi.stubGlobal('WebSocket', ThrowingWebSocket);
+
+    const client = new NullclawClient('::::invalid-url::::', 'sess-1');
+    const events: any[] = [];
+    client.onEvent = (e: any) => events.push(e);
+    client.connect();
+
+    expect(client.state).toBe('disconnected');
+    expect(events).toHaveLength(1);
+    expect(events[0].type).toBe('error');
+    expect(events[0].payload.code).toBe('invalid_websocket_url');
   });
 
   it('emits protocol error for malformed pairing_result payload', () => {
