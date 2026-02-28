@@ -3,6 +3,8 @@
 A terminal-style web interface for `nullclaw`.
 The app uses WebSocket + `WebChannel v1` and supports PIN pairing, streaming assistant responses, tool-call rendering, approval prompts, and end-to-end encryption.
 
+![Nullclaw Pairing Screen](docs/assets/pairing-screen.png)
+
 ## Features
 
 - Connect to an agent via `ws://...` endpoint and a 6-digit pairing PIN.
