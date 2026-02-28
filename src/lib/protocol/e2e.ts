@@ -1,0 +1,84 @@
+import { chacha20poly1305 } from '@noble/ciphers/chacha.js';
+import { randomBytes } from '@noble/ciphers/utils.js';
+
+const E2E_LABEL = 'webchannel-e2e-v1';
+
+// -- Base64url helpers --
+
+function toBase64Url(buf: ArrayBuffer | Uint8Array): string {
+  const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+  let binary = '';
+  for (const b of bytes) binary += String.fromCharCode(b);
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function fromBase64Url(s: string): Uint8Array {
+  const padded = s.replace(/-/g, '+').replace(/_/g, '/');
+  const binary = atob(padded);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+// -- X25519 key exchange (Web Crypto) --
+
+export async function generateKeyPair(): Promise<CryptoKeyPair> {
+  return crypto.subtle.generateKey({ name: 'X25519' }, true, ['deriveBits']);
+}
+
+export async function exportPublicKey(key: CryptoKey): Promise<string> {
+  const raw = await crypto.subtle.exportKey('raw', key);
+  return toBase64Url(raw);
+}
+
+async function importPublicKey(base64url: string): Promise<CryptoKey> {
+  const raw = fromBase64Url(base64url);
+  return crypto.subtle.importKey('raw', raw, { name: 'X25519' }, true, []);
+}
+
+export async function deriveSharedKey(
+  privateKey: CryptoKey,
+  remotePubBase64url: string,
+): Promise<Uint8Array> {
+  const remotePub = await importPublicKey(remotePubBase64url);
+  const sharedBits = await crypto.subtle.deriveBits(
+    { name: 'X25519', public: remotePub },
+    privateKey,
+    256,
+  );
+  // SHA-256(label || shared_secret)
+  const label = new TextEncoder().encode(E2E_LABEL);
+  const combined = new Uint8Array(label.length + sharedBits.byteLength);
+  combined.set(label);
+  combined.set(new Uint8Array(sharedBits), label.length);
+  const hash = await crypto.subtle.digest('SHA-256', combined);
+  return new Uint8Array(hash);
+}
+
+// -- ChaCha20-Poly1305 symmetric encryption --
+
+export function encrypt(
+  sharedKey: Uint8Array,
+  plaintext: string,
+): { nonce: string; ciphertext: string } {
+  const nonce = randomBytes(12);
+  const cipher = chacha20poly1305(sharedKey, nonce);
+  const data = new TextEncoder().encode(plaintext);
+  const sealed = cipher.encrypt(data);
+  return {
+    nonce: toBase64Url(nonce),
+    ciphertext: toBase64Url(sealed),
+  };
+}
+
+export function decrypt(
+  sharedKey: Uint8Array,
+  nonceB64: string,
+  ciphertextB64: string,
+): string {
+  const nonce = fromBase64Url(nonceB64);
+  const ciphertext = fromBase64Url(ciphertextB64);
+  const cipher = chacha20poly1305(sharedKey, nonce);
+  const decrypted = cipher.decrypt(ciphertext);
+  return new TextDecoder().decode(decrypted);
+}
