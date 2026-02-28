@@ -63,12 +63,12 @@
 
             <div class="info-line">
                 <span class="label">E2E_PROTOCOL:</span>
-                <span class="value">X25519 (ECDH) + AES-256-GCM</span>
+                <span class="value">X25519 (ECDH) + ChaCha20-Poly1305</span>
             </div>
 
             <div class="info-line">
                 <span class="label">E2E_KEY_DERIVATION:</span>
-                <span class="value">HKDF-SHA256</span>
+                <span class="value">SHA-256(label || shared_secret)</span>
             </div>
 
             <div class="divider"></div>
