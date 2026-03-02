@@ -1,4 +1,4 @@
-# nullclaw-ui Architecture
+# nullclaw-chat-ui Architecture
 
 ## Goals
 

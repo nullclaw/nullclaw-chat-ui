@@ -1,4 +1,4 @@
-# nullclaw-ui Documentation
+# nullclaw-chat-ui Documentation
 
 - [Architecture](./architecture.md)
 - [Protocol and E2E](./protocol.md)
