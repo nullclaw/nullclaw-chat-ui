@@ -49,8 +49,9 @@ Open `http://localhost:5173`.
 ### 4) Pair with an agent
 
 1. Enter the WebSocket endpoint (default: `ws://127.0.0.1:32123/ws`).
-2. Enter a 6-digit pairing PIN.
-3. After `pairing_result`, the UI switches to chat mode.
+2. If your backend requires `web.accounts.<name>.auth_token` (common for non-loopback binds), set it in the optional `auth_token` field.
+3. Enter a 6-digit pairing PIN.
+4. After `pairing_result`, the UI switches to chat mode.
 
 ## Scripts
 
@@ -101,7 +102,7 @@ Detailed docs:
 
 `localStorage` keys:
 
-- `nullclaw_ui_auth_v1` - endpoint URL, `access_token`, `shared_key`, `expires_at`.
+- `nullclaw_ui_auth_v1` - endpoint URL (may include `?token=` when used), `access_token`, `shared_key`, `expires_at`.
 - `nullclaw_ui_theme` - current theme.
 - `nullclaw_ui_effects` - visual effects toggle.
 

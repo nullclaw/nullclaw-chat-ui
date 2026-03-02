@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { ClientState } from "$lib/protocol/client.svelte";
+    import { redactWebSocketAuthToken } from "$lib/protocol/ws-url";
 
     interface Props {
         state: ClientState;
@@ -9,6 +10,7 @@
     }
 
     let { state, sessionId, endpointUrl, onClose }: Props = $props();
+    const safeEndpointUrl = $derived(redactWebSocketAuthToken(endpointUrl));
 
     function handleBackdropClick() {
         onClose();
@@ -39,7 +41,7 @@
         <div class="modal-body">
             <div class="info-line">
                 <span class="label">ENDPOINT_URI:</span>
-                <span class="value">{endpointUrl || "UNRESOLVED"}</span>
+                <span class="value">{safeEndpointUrl || "UNRESOLVED"}</span>
             </div>
 
             <div class="info-line">

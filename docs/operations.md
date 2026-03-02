@@ -24,6 +24,7 @@ Implications:
 
 WebSocket endpoint is currently user-entered in `PairingScreen`.
 Default value: `ws://127.0.0.1:32123/ws`.
+For deployments that enforce `web.accounts.<name>.auth_token`, users can provide the value via the optional `auth_token` field in the pairing form (it is appended as `?token=...` when opening the WebSocket).
 
 To change default endpoint, update initial `url` in `src/lib/components/PairingScreen.svelte`.
 
@@ -31,7 +32,7 @@ To change default endpoint, update initial `url` in `src/lib/components/PairingS
 
 `nullclaw_ui_auth_v1` in local storage includes:
 
-- endpoint URL
+- endpoint URL (may include `token` query param when configured in UI)
 - `access_token`
 - `shared_key` (base64url)
 - `expires_at`

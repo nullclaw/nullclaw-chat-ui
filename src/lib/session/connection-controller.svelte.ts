@@ -11,6 +11,7 @@ import {
   exportPublicKey,
   generateKeyPair,
 } from '$lib/protocol/e2e';
+import { withWebSocketAuthToken } from '$lib/protocol/ws-url';
 
 const DEFAULT_ENDPOINT_URL = 'ws://unknown';
 const PAIRING_TIMEOUT_MS = 10_000;
@@ -123,16 +124,17 @@ export function createConnectionController(sessionId: string) {
     });
   }
 
-  async function connectWithPairing(url: string, code: string): Promise<void> {
+  async function connectWithPairing(url: string, code: string, authToken?: string): Promise<void> {
+    const connectUrl = withWebSocketAuthToken(url, authToken);
     pairingError = null;
     clearStoredAuth();
     client?.disconnect();
     session.clear();
 
-    const newClient = new NullclawClient(url, sessionId);
-    const handlers = attachClientHandlers(newClient, url);
+    const newClient = new NullclawClient(connectUrl, sessionId);
+    const handlers = attachClientHandlers(newClient, connectUrl);
     client = newClient;
-    lastEndpointUrl = url;
+    lastEndpointUrl = connectUrl;
     client.connect();
 
     try {
