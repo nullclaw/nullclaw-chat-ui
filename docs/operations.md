@@ -57,14 +57,14 @@ Security expectations:
 
 When a tag matching `v*` is pushed, `.github/workflows/release.yml` runs and publishes:
 
-- `nullclaw-ui-<tag>.tar.gz`
-- `nullclaw-ui-<tag>.zip`
+- `nullclaw-chat-ui-<tag>.tar.gz`
+- `nullclaw-chat-ui-<tag>.zip`
 
 Each archive contains:
 
-- `nullclaw-ui` (Unix launcher)
-- `nullclaw-ui.cmd` (Windows launcher)
-- `bin/nullclaw-ui.js`
+- `nullclaw-chat-ui` (Unix launcher)
+- `nullclaw-chat-ui.cmd` (Windows launcher)
+- `bin/nullclaw-chat-ui.js`
 - `build/` (static app bundle)
 
 ## Troubleshooting

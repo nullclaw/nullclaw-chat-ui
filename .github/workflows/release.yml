@@ -37,6 +37,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            release/nullclaw-ui-*.tar.gz
-            release/nullclaw-ui-*.zip
+            release/nullclaw-chat-ui-*.tar.gz
+            release/nullclaw-chat-ui-*.zip
           generate_release_notes: true

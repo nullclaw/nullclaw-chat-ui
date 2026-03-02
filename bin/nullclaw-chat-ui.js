@@ -30,12 +30,12 @@ const mimeTypes = {
 };
 
 function printHelp() {
-	console.log(`nullclaw-ui ${packageVersion}
+	console.log(`nullclaw-chat-ui ${packageVersion}
 
 Usage:
-  nullclaw-ui run [--host <host>] [--port <port>]
-  nullclaw-ui version
-  nullclaw-ui help
+  nullclaw-chat-ui run [--host <host>] [--port <port>]
+  nullclaw-chat-ui version
+  nullclaw-chat-ui help
 
 Commands:
   run      Serve the built UI from the local package.
@@ -113,7 +113,7 @@ function serveBuiltUi({ host, port }) {
 	const entryHtml = join(buildDir, "index.html");
 	if (!existsSync(entryHtml)) {
 		console.error("Build output was not found.");
-		console.error("Run `npm run build` in this package, then retry `nullclaw-ui run`.");
+		console.error("Run `npm run build` in this package, then retry `nullclaw-chat-ui run`.");
 		process.exit(1);
 	}
 
@@ -150,7 +150,7 @@ function serveBuiltUi({ host, port }) {
 	});
 
 	server.listen(port, host, () => {
-		console.log(`nullclaw-ui running at http://${host}:${port}`);
+		console.log(`nullclaw-chat-ui running at http://${host}:${port}`);
 		console.log("Press Ctrl+C to stop.");
 	});
 
@@ -185,7 +185,7 @@ function main() {
 	}
 
 	console.error(`Unknown command: ${command}`);
-	console.error("Use `nullclaw-ui help` for usage.");
+	console.error("Use `nullclaw-chat-ui help` for usage.");
 	process.exit(1);
 }
 

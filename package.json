@@ -1,10 +1,10 @@
 {
-	"name": "nullclaw-ui",
+	"name": "nullclaw-chat-ui",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
 	"bin": {
-		"nullclaw-ui": "./bin/nullclaw-ui.js"
+		"nullclaw-chat-ui": "./bin/nullclaw-chat-ui.js"
 	},
 	"files": [
 		"bin",
@@ -18,7 +18,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"cli": "node ./bin/nullclaw-ui.js",
+		"cli": "node ./bin/nullclaw-chat-ui.js",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"prepare": "svelte-kit sync || echo ''",

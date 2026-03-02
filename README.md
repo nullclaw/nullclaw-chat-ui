@@ -1,4 +1,4 @@
-# nullclaw-ui
+# nullclaw-chat-ui
 
 A terminal-style web interface for `nullclaw`.
 The app uses WebSocket + `WebChannel v1` and supports PIN pairing, streaming assistant responses, tool-call rendering, approval prompts, and end-to-end encryption.
@@ -69,16 +69,16 @@ GitHub release artifacts include a runnable CLI bundle with `build/` assets and 
 After extracting a release archive, put the launcher on your `$PATH`:
 
 ```bash
-chmod +x nullclaw-ui/nullclaw-ui
-sudo ln -sf "$(pwd)/nullclaw-ui/nullclaw-ui" /usr/local/bin/nullclaw-ui
-nullclaw-ui run --host 127.0.0.1 --port 4173
+chmod +x nullclaw-chat-ui/nullclaw-chat-ui
+sudo ln -sf "$(pwd)/nullclaw-chat-ui/nullclaw-chat-ui" /usr/local/bin/nullclaw-chat-ui
+nullclaw-chat-ui run --host 127.0.0.1 --port 4173
 ```
 
 Notes:
 
 - Requires `Node.js 20+` available as `node`.
-- Windows users can use `nullclaw-ui.cmd` from the extracted folder.
-- `nullclaw-ui run` serves the built static UI bundle with SPA fallback routing and still requires a reachable `nullclaw` WebSocket backend.
+- Windows users can use `nullclaw-chat-ui.cmd` from the extracted folder.
+- `nullclaw-chat-ui run` serves the built static UI bundle with SPA fallback routing and still requires a reachable `nullclaw` WebSocket backend.
 
 ## Architecture (Short)
 
