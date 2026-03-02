@@ -58,7 +58,15 @@
     effectsEnabled = preferences.effectsEnabled;
     applyUiPreferences(preferences);
 
-    connection.restoreSavedSession();
+    // Auto-connect if ws and code query params are present (embedded mode)
+    const params = new URLSearchParams(window.location.search);
+    const wsParam = params.get("ws");
+    const codeParam = params.get("code");
+    if (wsParam && codeParam) {
+      connection.connectWithPairing(wsParam, codeParam);
+    } else {
+      connection.restoreSavedSession();
+    }
 
     return () => {
       connection.dispose();
