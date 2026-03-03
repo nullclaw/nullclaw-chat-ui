@@ -47,11 +47,9 @@ export async function exportPublicKey(key: CryptoKey): Promise<string> {
 
 async function importPublicKey(base64url: string): Promise<CryptoKey> {
   const raw = fromBase64Url(base64url);
-  const rawBuffer: ArrayBuffer =
-    raw.byteOffset === 0 && raw.byteLength === raw.buffer.byteLength
-      ? (raw.buffer as ArrayBuffer)
-      : raw.slice().buffer;
-  return crypto.subtle.importKey('raw', rawBuffer, { name: 'X25519' }, true, []);
+  const keyBytes = new Uint8Array(new ArrayBuffer(raw.byteLength));
+  keyBytes.set(raw);
+  return crypto.subtle.importKey('raw', keyBytes, { name: 'X25519' }, true, []);
 }
 
 export async function deriveSharedKey(

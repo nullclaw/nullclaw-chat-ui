@@ -25,7 +25,7 @@ describe('PairingScreen', () => {
     await fireEvent.submit(form as HTMLFormElement);
 
     expect(onConnect).toHaveBeenCalledTimes(1);
-    expect(onConnect).toHaveBeenCalledWith('ws://127.0.0.1:32123/ws', '123456');
+    expect(onConnect).toHaveBeenCalledWith('ws://127.0.0.1:32123/ws', '123456', '');
   });
 
   it('does not submit when code is invalid', async () => {
@@ -45,5 +45,30 @@ describe('PairingScreen', () => {
     await fireEvent.submit(form as HTMLFormElement);
 
     expect(onConnect).not.toHaveBeenCalled();
+  });
+
+  it('passes auth token when provided', async () => {
+    const onConnect = vi.fn();
+    const { getByPlaceholderText, container } = render(PairingScreen, {
+      props: {
+        connecting: false,
+        error: null,
+        onConnect,
+      },
+    });
+
+    const tokenInput = getByPlaceholderText('required for non-loopback listen') as HTMLInputElement;
+    const codeInput = getByPlaceholderText('______') as HTMLInputElement;
+    await fireEvent.input(tokenInput, { target: { value: 'gateway-secret-token' } });
+    await fireEvent.input(codeInput, { target: { value: '123456' } });
+
+    const form = container.querySelector('form');
+    await fireEvent.submit(form as HTMLFormElement);
+
+    expect(onConnect).toHaveBeenCalledWith(
+      'ws://127.0.0.1:32123/ws',
+      '123456',
+      'gateway-secret-token',
+    );
   });
 });

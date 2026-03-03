@@ -2,19 +2,20 @@
   interface Props {
     connecting?: boolean;
     error?: string | null;
-    onConnect: (url: string, code: string) => void;
+    onConnect: (url: string, code: string, authToken?: string) => void;
   }
 
   let { connecting = false, error = null, onConnect }: Props = $props();
 
   let url = $state("ws://127.0.0.1:32123/ws");
+  let authToken = $state("");
   let code = $state("");
 
   function handleSubmit(e: Event) {
     e.preventDefault();
     const trimmed = code.replace(/\s/g, "");
     if (trimmed.length !== 6 || !/^\d{6}$/.test(trimmed)) return;
-    onConnect(url, trimmed);
+    onConnect(url, trimmed, authToken);
   }
 
   function handleCodeInput(e: Event) {
@@ -37,6 +38,17 @@
           type="text"
           bind:value={url}
           placeholder="ws://127.0.0.1:32123/ws"
+          disabled={connecting}
+        />
+      </label>
+
+      <label class="field">
+        <span class="label">auth_token (optional):</span>
+        <input
+          type="password"
+          bind:value={authToken}
+          placeholder="required for non-loopback listen"
+          autocomplete="off"
           disabled={connecting}
         />
       </label>
