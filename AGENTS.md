@@ -9,7 +9,7 @@ The chat surface for NullClaw: a SvelteKit app served two ways — as a web app
 → `module.js`, consumed by NullHub's module loader). TypeScript + Svelte 5.
 
 Transport contract: WebSocket to the NullClaw gateway's `channels.web` endpoint
-(default `ws://127.0.0.1:32123/ws`), end-to-end encryption (X25519 + ChaCha20),
+(default `ws://127.0.0.1:32123/ws`), end-to-end encryption (X25519 + ChaCha20-Poly1305),
 PIN/token pairing. The protocol lives in `src/lib/protocol/` and the session
 controller in `src/lib/session/` — treat these as the compatibility surface.
 
@@ -18,7 +18,8 @@ controller in `src/lib/session/` — treat these as the compatibility surface.
 - The gateway wire protocol is a compatibility contract: changes must be
   backward-compatible or explicitly versioned, and tested against a running
   `nullclaw gateway`.
-- No secrets in the repo or logs; pairing tokens are ephemeral client-side state.
+- No secrets in the repo. Keep tokens and keys out of logs; persisted browser
+  auth must respect its TTL and be cleared on rejection.
 - Deterministic tests: `npm test` (vitest) must pass; no network in unit tests.
 
 ## 3) Validation
